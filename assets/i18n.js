@@ -4,7 +4,7 @@
  const keys=Object.keys(BI_DICTIONARY).filter(k=>CJK.test(k)).sort((a,b)=>b.length-a.length);
  const tokens=new RegExp(keys.map(escape).join('|'),'g');
  let mode='bi';try{mode=localStorage.getItem('caio-language-v1')||'bi'}catch{}if(!['bi','zh','en'].includes(mode))mode='bi';
- function resolve(raw){const s=String(raw).trim();if(!s)return null;let heading=s.match(/^STAGE (\d+) \/ LESSON (\d+)$/);if(heading)return {zh:'第 '+heading[1]+' 阶段 / 第 '+heading[2]+' 课',en:s};heading=s.match(/^CONCEPT (\d+)$/);if(heading)return {zh:'概念 '+heading[1],en:s};if(BI_REVERSE[s])return {zh:BI_REVERSE[s],en:s};if(BI_DICTIONARY[s])return {zh:s,en:BI_DICTIONARY[s]};if(!CJK.test(s))return null;
+ function resolve(raw){const s=String(raw).trim();if(!s)return null;let heading=s.match(/^STAGE (\d+) \/ LESSON (\d+)$/);if(heading)return {zh:'第 '+heading[1]+' 阶段 / 第 '+heading[2]+' 课',en:s};heading=s.match(/^CONCEPT (\d+)$/);if(heading)return {zh:'概念 '+heading[1],en:s};if(BI_REVERSE[s])return {zh:BI_REVERSE[s],en:s};if(BI_DICTIONARY[s])return {zh:s,en:BI_DICTIONARY[s]};heading=s.match(/^第 (\S+) 题，(.+)$/);if(heading){const r=resolve(heading[2]);return {zh:s,en:'Question '+heading[1]+', '+(r?r.en:heading[2])}}heading=s.match(/^(.+)，第 (\d+) 页，包括第 (\S+) 题$/);if(heading){const r=resolve(heading[1]);return {zh:s,en:(r?r.en:heading[1])+', page '+heading[2]+', including question '+heading[3]}}if(!CJK.test(s))return null;
   let en=s.replace(tokens,k=>BI_DICTIONARY[k]);
   if(/^第 \d+ 周$/.test(s))en='Week '+s.match(/\d+/)[0];
   if(/^第 \d+ 步$/.test(s))en='Step '+s.match(/\d+/)[0];
