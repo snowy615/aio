@@ -9,7 +9,7 @@ function save(){try{localStorage.setItem(KEY,JSON.stringify(study))}catch{$('#lo
 function quizRecord(id){return study.quizzes[id]||{choices:{},checked:false}}
 function passed(id){const l=LESSONS[id-1],r=quizRecord(id);return r.checked&&l.quiz.every((q,i)=>r.choices[i]===q.answer)}
 function complete(id){return !!study.tasks[id]&&passed(id)}
-function paperURL(q){return `./?paper=${q.bank}&q=${q.number}&lesson=${q.lesson}`}
+function paperURL(q){return `index.html?paper=${q.bank}&q=${q.number}&lesson=${q.lesson}`}
 function go(id){if(!LESSONS.some(l=>l.id===id))return;location.hash='lesson='+id}
 function sidebar(){const done=LESSONS.filter(l=>complete(l.id)).length;$('#learnCount').textContent=done+' / '+LESSONS.length;$('#learnProgress').max=LESSONS.length;$('#learnProgress').value=done;$('#lessonList').innerHTML=STAGES.map((s,i)=>`<div class="stage-label">${i+1}. ${s.title}</div>${LESSONS.filter(l=>l.stage===i+1).map(l=>`<button class="lesson-nav ${current===l.id&&location.hash?'active':''} ${complete(l.id)?'completed':''}" data-lesson="${l.id}" ${current===l.id&&location.hash?'aria-current="page"':''}><span class="num">${complete(l.id)?'✓':String(l.id).padStart(2,'0')}</span><span>${E(l.title.split('：')[0])}</span></button>`).join('')}`).join('');$('#mobileLesson').innerHTML='<option value="0">学习路径总览</option>'+LESSONS.map(l=>`<option value="${l.id}">${complete(l.id)?'✓ ':''}${String(l.id).padStart(2,'0')} ${E(l.title)}</option>`).join('');$('#mobileLesson').value=location.hash?current:0;bindLessonButtons()}
 function bindLessonButtons(){document.querySelectorAll('[data-lesson]').forEach(b=>b.onclick=()=>go(Number(b.dataset.lesson)))}
